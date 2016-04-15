@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+USERNAME=$1
+
+if [ -z "$USERNAME" ]; then
+    echo "Please specify a username"
+    exit 1
+fi
+
+userdel $USERNAME
+
+HOME_DIR=/home/$USERNAME
+
+if [ ! -d "$HOME_DIR" ]; then
+    echo "Could not find user's home directory at: $HOME_DIR"
+    exit 1
+fi
+
+rm -rf $HOME_DIR

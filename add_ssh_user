@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+USERNAME=$1
+SSH_KEY_PATH=$2
+
+if [ -z "$USERNAME" ]; then
+    echo "Please specify a username"
+    exit 1
+fi
+
+if [ ! -f "$SSH_KEY_PATH" ]; then
+    echo "Please specify a path to the user's public keys"
+    exit 1
+fi
+
+useradd --group jump $USERNAME
+
+HOME_DIR=/home/$USERNAME
+
+mkdir -p $HOME_DIR/.ssh
+chown -R $USERNAME: $HOME_DIR
+
+cat $SSH_KEY_PATH | awk '{print "command=\"/usr/local/bin/ssh-restrict /etc/ssh-restrict/config\" " $0}' > $HOME_DIR/.ssh/authorized_keys
+
+echo "Now set up google auth for $USERNAME"
+
+su - $USERNAME -c "google-authenticator --time-based --disallow-reuse --force --rate-limit=1 --rate-time=30 --window-size=3"
