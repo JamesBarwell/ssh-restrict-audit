@@ -1,0 +1,2 @@
+[commands]
+(\w+)@([0-9.]+) = ssh -i /etc/ssh-restrict/jump-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no {0}@{1}
