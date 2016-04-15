@@ -1,0 +1,10 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: no
+  tasks:
+  - name: configure PAM
+    copy: src=files/pam_sshd dest=/etc/pam.d/sshd owner=root mode=0755
+
+  - name: set sshd config
+    copy: src=files/sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644

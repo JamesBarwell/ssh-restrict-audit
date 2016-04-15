@@ -1,0 +1,31 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: no
+  tasks:
+  - name: install Google Authenticator
+    apt: name=libpam-google-authenticator state=present
+
+  - name: install ssh-restrict script
+    copy: src=files/ssh-restrict dest=/usr/local/bin/ssh-restrict owner=root mode=0755
+
+  - name: create ssh-restrict directory
+    file: path=/etc/ssh-restrict state=directory owner=root mode=0755
+
+  - name: install ssh-restrict configuration
+    copy: src=files/ssh-restrict-config dest=/etc/ssh-restrict/config owner=root mode=0644
+
+  - name: create audit directory
+    file: path=/tmp/audit state=directory owner=root mode=0777
+
+  - name: install internal environment jump private key
+    copy: src=files/jump_key dest=/etc/ssh-restrict/jump-key owner=root mode=0444
+
+  - name: create jump user group
+    group: name=jump
+
+  - name: install user management scripts
+    copy: src=files/{{ item }} dest=/usr/local/sbin/ owner=root mode=0700
+    with_items:
+    - add_ssh_user
+    - remove_ssh_user
